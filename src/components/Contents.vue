@@ -26,21 +26,50 @@ const contentsOrigin = [
   },
 ]
 
-const fetchedContents = ref([])
+const fetchedContents = ref()
 
 // githubの最終更新日時取得
+// const fetchLastUpdates = () => {
+//   contentsOrigin.forEach((content) =>
+//     axios.get(`https://api.github.com/repos/YutakaNagai/${content.repoName}/commits`)
+//       .then(res => res.data)
+//       .then(info => info[0]["commit"])
+//       .then(commit => {
+//         content.lastCommitMsg = commit.message
+//         const date = new Date(commit.committer.date)
+//         content.lastCommitDate = date.toLocaleString({ timeZone: 'Asia/Tokyo' })
+//         content.lastCommitTimeUTC = date.getTime()
+//         fetchedContents.value.push(content)
+//       })
+//   )
+// }
 const fetchLastUpdates = () => {
-  contentsOrigin.forEach((content) =>
-    axios.get(`https://api.github.com/repos/YutakaNagai/${content.repoName}/commits`)
-      .then(res => res.data)
-      .then(info => info[0]["commit"])
-      .then(commit => {
-        content.lastCommitMsg = commit.message
-        const date = new Date(commit.committer.date)
-        content.lastCommitDate = date.toLocaleString({ timeZone: 'Asia/Tokyo' })
-        fetchedContents.value.push(content)
+  // githubの最終更新日時取得
+  const promiseList = []
+  for (let i=0; i<contentsOrigin.length; i++){
+    const content = contentsOrigin[i]
+    promiseList.push(
+      axios.get(`https://api.github.com/repos/YutakaNagai/${content.repoName}/commits`)
+        .then(res => res.data)
+        .then(info => info[0]["commit"])
+        .then(commit => {
+          content.lastCommitMsg = commit.message
+          const date = new Date(commit.committer.date)
+          content.lastCommitDate = date.toLocaleString({ timeZone: 'Asia/Tokyo' })
+          content.lastCommitTimeUTC = date.getTime()
+          return content
+        })
+    )
+  }
+
+  // 更新日の新しい順に並び変え
+  Promise.all(promiseList)
+    .then((results)=>{
+      results.sort((a, b) => {
+        return b.lastCommitTimeUTC - a.lastCommitTimeUTC
       })
-  )
+      fetchedContents.value = results
+    })
 }
 
 onMounted(async ()  => {
@@ -50,10 +79,11 @@ onMounted(async ()  => {
 </script>
 
 <template>
+  <div>↓最終更新日時順↓</div>
   <div v-for="(content, index) in fetchedContents" :key="index" class="contents">
     <table>
       <tr>
-        <th>タイトル</th><td><a :href="content.url">{{ content.title }}</a></td>
+        <th>タイトル</th><td><a :href="content.url" target="_blank">{{ content.title }}</a></td>
       </tr>
       <tr>
         <th>詳細</th><td>{{ content.detail }}</td>
@@ -76,7 +106,7 @@ onMounted(async ()  => {
   background: #C4E1C5;
   border-radius: 10svw;
   width: 90svw;
-  margin-bottom: 5svw;
+  margin: 5svw 0;
 }
 
 table {
