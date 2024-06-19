@@ -28,21 +28,6 @@ const contentsOrigin = [
 
 const fetchedContents = ref()
 
-// githubの最終更新日時取得
-// const fetchLastUpdates = () => {
-//   contentsOrigin.forEach((content) =>
-//     axios.get(`https://api.github.com/repos/YutakaNagai/${content.repoName}/commits`)
-//       .then(res => res.data)
-//       .then(info => info[0]["commit"])
-//       .then(commit => {
-//         content.lastCommitMsg = commit.message
-//         const date = new Date(commit.committer.date)
-//         content.lastCommitDate = date.toLocaleString({ timeZone: 'Asia/Tokyo' })
-//         content.lastCommitTimeUTC = date.getTime()
-//         fetchedContents.value.push(content)
-//       })
-//   )
-// }
 const fetchLastUpdates = () => {
   // githubの最終更新日時取得
   const promiseList = []
@@ -105,8 +90,9 @@ onMounted(async ()  => {
 .contents {
   background: #C4E1C5;
   border-radius: 10svw;
-  width: 90svw;
+  width: 80svw;
   margin: 5svw 0;
+  box-shadow: 0.35rem 0.4rem 0.35rem 0rem rgba(0, 0, 0, 0.35);
 }
 
 table {
