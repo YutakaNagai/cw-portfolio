@@ -3,7 +3,9 @@ import Contents from './components/Contents.vue'
 </script>
 
 <template>
-  <h1>CraftWiz</h1>
+  <a href="https://craftwiz.jp/" target="_blank">
+    <img style="width: 80svw;" src="./assets/バナー_透過.png" />
+  </a>
   <h2>つくったものおきば</h2>
   <div>
     <Contents />

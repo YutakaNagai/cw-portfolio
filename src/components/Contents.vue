@@ -89,7 +89,7 @@ onMounted(async ()  => {
 <style scoped>
 .contents {
   background: #C4E1C5;
-  border-radius: 10svw;
+  border-radius: 2rem;
   width: 80svw;
   margin: 5svw 0;
   box-shadow: 0.35rem 0.4rem 0.35rem 0rem rgba(0, 0, 0, 0.35);
