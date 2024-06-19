@@ -1,12 +1,14 @@
 <script setup>
-import HelloWorld from "./components/HelloWorld.vue";
+import Contents from './components/Contents.vue'
 </script>
 
 <template>
-  <h1>Portfolio</h1>
-  <a>Profile</a>
-  <a>Skills</a>
-  <a>Sample</a>
+  <h1>CraftWiz</h1>
+  <h2>つくったものおきば</h2>
+  <div>
+    <Contents />
+  </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+</style>
