@@ -110,6 +110,7 @@ onMounted(async () => {
 
 table {
   padding: 1rem;
+  min-width: 516px;
 }
 tr {
   padding: 1rem;
