@@ -3,6 +3,7 @@ import Contents from "./components/Contents.vue";
 </script>
 
 <template>
+  <div class="env">staging</div>
   <div class="main">
     <a href="https://craftwiz.jp/" target="_blank">
       <img src="./assets/バナー_透過.png" />
@@ -15,6 +16,9 @@ import Contents from "./components/Contents.vue";
 </template>
 
 <style scoped>
+.env {
+  background: #9c9c9c;
+}
 .main {
   text-align: center;
   margin: 0 auto;
