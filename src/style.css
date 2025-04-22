@@ -73,3 +73,57 @@ button:hover {
     background-color: #f9f9f9;
   }
 }
+
+
+/* 共通のポリシーページ用スタイル */
+.policy-page {
+  text-align: left;
+  max-width: 700px;
+  padding: 2rem 1rem;
+  margin: 0 auto;
+  font-family: "Inter", "M PLUS Rounded 1c", sans-serif;
+}
+
+.policy-content {
+  background: #f8fffd;
+  border: 1px solid #b0e5df;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.policy-content h1 {
+  font-size: 1.8rem;
+  color: #45AEA8;
+  margin-bottom: 1rem;
+}
+
+.policy-content h2 {
+  font-size: 1.2rem;
+  margin-top: 1.5rem;
+  color: #358c87;
+}
+
+.policy-content p,
+.policy-content ul {
+  font-size: 1rem;
+  color: #444;
+  line-height: 1.6;
+}
+
+.policy-content ul {
+  padding-left: 1.5rem;
+  list-style-type: disc;
+}
+
+.policy-content .last-updated {
+  margin-top: 2rem;
+  font-size: 0.9rem;
+  color: #888;
+  text-align: right;
+}
+
+.policy-content a {
+  color: #2a908a;
+  text-decoration: underline;
+}
