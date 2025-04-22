@@ -2,6 +2,8 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 
+const tab = ref("services");
+
 const contentsOrigin = [
   {
     title: "ポケしりとり",
@@ -29,102 +31,215 @@ const contentsOrigin = [
 const fetchedContents = ref();
 
 const fetchLastUpdates = () => {
-  // githubの最終更新日時取得
-  const promiseList = [];
-  for (let i = 0; i < contentsOrigin.length; i++) {
-    const content = contentsOrigin[i];
-    promiseList.push(
-      axios
-        .get(
-          `https://api.github.com/repos/YutakaNagai/${content.repoName}/commits`
-        )
-        .then((res) => res.data)
-        .then((info) => info[0]["commit"])
-        .then((commit) => {
-          content.lastCommitMsg = commit.message;
-          const date = new Date(commit.committer.date);
-          content.lastCommitDate = date.toLocaleString({
-            timeZone: "Asia/Tokyo",
-          });
-          content.lastCommitTimeUTC = date.getTime();
-          return content;
-        })
-    );
-  }
+  const promiseList = contentsOrigin.map((content) =>
+    axios
+      .get(
+        `https://api.github.com/repos/YutakaNagai/${content.repoName}/commits`
+      )
+      .then((res) => res.data)
+      .then((info) => info[0]["commit"])
+      .then((commit) => {
+        content.lastCommitMsg = commit.message;
+        const date = new Date(commit.committer.date);
+        content.lastCommitDate = date.toLocaleString("ja-JP", {
+          timeZone: "Asia/Tokyo",
+        });
+        content.lastCommitTimeUTC = date.getTime();
+        return content;
+      })
+  );
 
-  // 更新日の新しい順に並び変え
   Promise.all(promiseList).then((results) => {
-    results.sort((a, b) => {
-      return b.lastCommitTimeUTC - a.lastCommitTimeUTC;
-    });
+    results.sort((a, b) => b.lastCommitTimeUTC - a.lastCommitTimeUTC);
     fetchedContents.value = results;
   });
 };
 
-onMounted(async () => {
-  await fetchLastUpdates();
+onMounted(() => {
+  fetchLastUpdates();
 });
 </script>
 
 <template>
-  <div>↓最終更新日時順↓</div>
-  <div
-    v-for="(content, index) in fetchedContents"
-    :key="index"
-    class="contents"
-  >
-    <table>
-      <tr>
-        <th>タイトル</th>
-        <td>
-          <a :href="content.url" target="_blank">{{ content.title }}</a>
-        </td>
-      </tr>
-      <tr>
-        <th>詳細</th>
-        <td>{{ content.detail }}</td>
-      </tr>
-      <tr>
-        <th>コメント</th>
-        <td>{{ content.comment }}</td>
-      </tr>
-      <tr>
-        <th>最終更新日</th>
-        <td>{{ content.lastCommitDate }}</td>
-      </tr>
-      <tr>
-        <th>最終更新内容</th>
-        <td>{{ content.lastCommitMsg }}</td>
-      </tr>
-    </table>
+  <div class="content-wrapper">
+    <div class="tab-bar">
+      <button @click="tab = 'services'" :class="{ active: tab === 'services' }">
+        Webサービス
+      </button>
+      <button @click="tab = 'games'" :class="{ active: tab === 'games' }">
+        ミニゲーム集
+      </button>
+    </div>
+
+    <transition name="fade" mode="out-in">
+      <div :key="tab" class="tab-content">
+        <div v-if="tab === 'services'" class="card">
+          <img
+            src="../assets/omakase-gohan.png"
+            alt="おまかせごはん"
+            class="thumb ogp"
+          />
+          <h2>おまかせごはん</h2>
+          <p>
+            Vue 3とGoogle Maps
+            APIを使った、レコメンド型飲食店検索サービス。UXとAPIコスト最適化にこだわって開発しました。
+          </p>
+          <a
+            class="btn"
+            href="https://omakase-gohan.craftwiz.jp"
+            target="_blank"
+          >
+            ▶ サイトを見る
+          </a>
+        </div>
+
+        <div v-else>
+          <div
+            v-for="item in fetchedContents"
+            :key="item.repoName"
+            class="card"
+          >
+            <h2>{{ item.title }}</h2>
+            <p>{{ item.detail }}</p>
+            <p class="comment">{{ item.comment }}</p>
+            <p class="update">最終更新: {{ item.lastCommitDate }}</p>
+            <a :href="item.url" target="_blank">▶ サイトを見る</a>
+          </div>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
 <style scoped>
-.contents {
-  background: #c4e1c5;
-  border-radius: 2rem;
-  margin-top: 1.5rem;
-  box-shadow: 0.35rem 0.4rem 0.35rem 0rem rgba(0, 0, 0, 0.35);
+.content-wrapper {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 1rem;
 }
 
-table {
-  padding: 1rem;
-  min-width: 516px;
+.tab-bar {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
 }
-tr {
-  padding: 1rem;
+
+.tab-bar button {
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  position: relative;
+  color: #888;
+  transition: color 0.3s;
 }
-th {
+
+.tab-bar button.active {
+  color: #646cff;
   font-weight: bold;
-  text-align: center;
-  width: 6rem;
 }
-td {
+
+.tab-bar button.active::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 2px;
+  background-color: #646cff;
+  border-radius: 1px;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.5rem;
   text-align: left;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
-  overflow: hidden;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.card h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: #111;
+}
+
+.card p {
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  color: #444;
+}
+
+.card .update {
+  font-size: 0.85rem;
+  color: #888;
+}
+
+.card .thumb {
+  width: 100%;
+  aspect-ratio: 1200 / 630;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.card a {
+  font-weight: bold;
+  color: white;
+  background-color: #646cff;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  text-decoration: none;
+  display: inline-block;
+  transition: background-color 0.3s;
+}
+
+.card a:hover {
+  background-color: #535bf2;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.4s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 600px) {
+  .card {
+    padding: 1rem;
+  }
+  .card h2 {
+    font-size: 1.2rem;
+  }
+  .card p {
+    font-size: 0.9rem;
+  }
+  .card .thumb {
+    aspect-ratio: auto;
+    height: auto;
+    max-height: 200px;
+  }
 }
 </style>
