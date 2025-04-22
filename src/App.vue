@@ -1,9 +1,12 @@
 <script setup>
 import Contents from "./components/Contents.vue";
+
+// .envから環境変数を取得
+const env = import.meta.env.VITE_APP_ENV;
 </script>
 
 <template>
-  <div class="env">staging</div>
+  <div v-if="env !== 'production'" class="env-label">{{ env }}</div>
   <div class="layout">
     <div class="main">
       <a href="https://craftwiz.jp/" target="_blank">
@@ -18,10 +21,15 @@ import Contents from "./components/Contents.vue";
 </template>
 
 <style scoped>
-.env {
+.env-label {
   background: #9c9c9c;
+  color: white;
+  font-weight: bold;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.9rem;
   position: sticky;
   top: 0;
+  z-index: 1000;
 }
 .layout {
   margin: 2rem;
