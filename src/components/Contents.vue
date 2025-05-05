@@ -75,20 +75,16 @@ onMounted(() => {
       <div :key="tab" class="tab-content">
         <div v-if="tab === 'services'" class="card">
           <img
-            src="../assets/omakase-gohan.png"
-            alt="おまかせごはん"
+            src="../assets/yoriguru.png"
+            alt="よりみちグルメ"
             class="thumb ogp"
           />
-          <h2>おまかせごはん</h2>
+          <h2>よりみちグルメ</h2>
           <p>
             Vue 3とGoogle Maps
             APIを使った、レコメンド型飲食店検索サービス。UXとAPIコスト最適化にこだわって開発しました。
           </p>
-          <a
-            class="btn"
-            href="https://omakase-gohan.craftwiz.jp"
-            target="_blank"
-          >
+          <a class="btn" href="https://yoriguru.com/" target="_blank">
             ▶ サイトを見る
           </a>
         </div>
